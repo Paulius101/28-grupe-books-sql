@@ -12,8 +12,19 @@ app.init = async () => {
         database: 'books',
     });
 
+
     // LOGIC BELOW
     await Author.create(conn, 'Vardenis', 'Pavardenis');
+    await Author.create(conn, 'Tusciazodis', 'Beprasmis');
+    await Author.create(conn, 'Tylenis', 'Ramusis');
+    const list = await Author.listAll(conn);
+    console.log(list);
+    const byID = await Author.findById(conn, 1);
+    console.log(byID);
+    const byName = await Author.findByFirstname(conn, 'Tusciazodis')
+    console.log(byName);
+    const byLastName = await Author.findByLastname(conn, 'Ramusis')
+    console.log(byLastName);
 }
 
 app.init();
