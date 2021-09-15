@@ -25,6 +25,10 @@ app.init = async () => {
     console.log(byName);
     const byLastName = await Author.findByLastname(conn, 'Ramusis')
     console.log(byLastName);
+    const update = await Author.updatePropertyById(conn, 1, 'firstname', 'Pavardenis')
+    console.log(update);
+    const deleted = await Author.delete(conn, 1);
+    console.log(deleted);
 }
 
 app.init();

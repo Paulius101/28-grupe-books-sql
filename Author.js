@@ -68,12 +68,31 @@ Author.findByLastname = async (connection, authorLastname) => {
     const byLastName = `Autoriaus duomenys, kurio pavarde ${authorLastname}: ID: ${rows[0].id} ${rows[0].firstname} ${rows[0].lastname}`;
     return byLastName;
 }
-
+/**
+ * 
+ * @param {Object} connection Objektas, su kuriuo kvieciame duombazes mainpuliavimo metodus.
+ * @param {number} authorId Autoriaus ID.
+ * @param {string} propertyName Atnaujinamos savybes pavadinimas.
+ * @param {string} propertyValue Atnaujinamos savybes verte.
+ * @returns { Promise < string >} Tekstas, skelbiantis kokia savybe, pagal duota ID, buvo atnaujinta i kokia verte.
+ */
 Author.updatePropertyById = async (connection, authorId, propertyName, propertyValue) => {
-
+    sql = 'UPDATE authors SET ' + propertyName + ' = "' + propertyValue + '" WHERE authors.id =' + authorId;
+    [rows] = await connection.execute(sql);
+    const updated = `Author whose ID = ${authorId} property ${propertyName} has been updated to ${propertyValue}`
+    return updated
 }
-
+/**
+ * 
+ * @param {Object} connection Objektas, su kuriuo kvieciame duombazes mainpuliavimo metodus.
+ * @param {number} authorId Autoriaus ID.
+ * @returns { Promise < string >} Tekstas, parodantis pagal koki ID buvo istirntas autorius.
+ */
 Author.delete = async (connection, authorId) => {
+    sql = 'DELETE FROM authors WHERE authors.id =' + authorId;
+    [rows] = await connection.execute(sql);
+    const deleted = `User whose ID = ${authorId} has been deleted from authors list.`
+    return deleted
 }
 
 module.exports = Author;
