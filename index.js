@@ -14,10 +14,14 @@ app.init = async () => {
 
 
     // LOGIC BELOW
-    await Author.create(conn, 'Vardenis', 'Pavardenis');
-    await Author.create(conn, 'Tusciazodis', 'Beprasmis');
-    await Author.create(conn, 'Tylenis', 'Ramusis');
-    await Author.create(conn, 'Makaule', 'Tuscia');
+    const create1 = await Author.create(conn, 'Vardenis', 'Pavardenis');
+    console.log(create1);
+    const create2 = await Author.create(conn, 'Tusciazodis', 'Beprasmis');
+    console.log(create2);
+    const create3 = await Author.create(conn, 'Tylenis', 'Ramusis');
+    console.log(create3);
+    const create4 = await Author.create(conn, 'Makaule', 'Tuscia');
+    console.log(create4);
     const list = await Author.listAll(conn);
     console.log(list);
     const byID = await Author.findById(conn, 1);
