@@ -27,8 +27,21 @@ app.init = async () => {
     console.log(byLastName);
     const update = await Author.updatePropertyById(conn, 1, 'firstname', 'Pavardenis')
     console.log(update);
-    const deleted = await Author.delete(conn, 1);
-    console.log(deleted);
+    // const deleted = await Author.delete(conn, 1);
+    // console.log(deleted);
+
+    const createBook1 = await Books.create(conn, 2, 'Blevyzgos', 1111)
+    console.log(createBook1);
+    const createBook2 = await Books.create(conn, 3, 'Skaitalai', 2222)
+    console.log(createBook2);
+    const createBook3 = await Books.create(conn, 1, 'Pamokslai', 3333)
+    console.log(createBook3);
+    const listOfBooks = await Books.listAll(conn)
+    console.log(listOfBooks);
+    const byBookName = await Books.findByName(conn, 'Blevyzgos')
+    console.log(byBookName);
+    const byBookYear = await Books.findByYear(conn, '2222')
+    console.log(byBookYear);
 }
 
 app.init();
