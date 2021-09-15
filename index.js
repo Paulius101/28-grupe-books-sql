@@ -17,6 +17,7 @@ app.init = async () => {
     await Author.create(conn, 'Vardenis', 'Pavardenis');
     await Author.create(conn, 'Tusciazodis', 'Beprasmis');
     await Author.create(conn, 'Tylenis', 'Ramusis');
+    await Author.create(conn, 'Makaule', 'Tuscia');
     const list = await Author.listAll(conn);
     console.log(list);
     const byID = await Author.findById(conn, 1);
@@ -27,8 +28,8 @@ app.init = async () => {
     console.log(byLastName);
     const update = await Author.updatePropertyById(conn, 1, 'firstname', 'Pavardenis')
     console.log(update);
-    // const deleted = await Author.delete(conn, 1);
-    // console.log(deleted);
+    const deleted = await Author.delete(conn, 4);
+    console.log(deleted);
 
     const createBook1 = await Books.create(conn, 2, 'Blevyzgos', 1111)
     console.log(createBook1);
@@ -42,6 +43,16 @@ app.init = async () => {
     console.log(byBookName);
     const byBookYear = await Books.findByYear(conn, '2222')
     console.log(byBookYear);
+    const updatedBookByID = await Books.updateById(conn, 1, 'book_name', 'Blevyzgeles')
+    console.log(updatedBookByID);
+    const updatedBookNameByID = await Books.updateNameById(conn, 2, 'Skaitymai')
+    console.log(updatedBookNameByID);
+    const updatedBookYearByID = await Books.updateYearById(conn, 3, 4444)
+    console.log(updatedBookYearByID);
+    const deletedBook = await Books.delete(conn, 3)
+    console.log(deletedBook);
+    const deletedBookByAuthor = await Books.deleteAllByAuthorId(conn, 2)
+    console.log(deletedBookByAuthor);
 }
 
 app.init();

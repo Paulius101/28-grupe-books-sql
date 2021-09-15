@@ -24,8 +24,9 @@ Author.listAll = async (connection) => {
     FROM authors';
     [rows] = await connection.execute(sql);
     let list = []
+    let ind = 0;
     for (const author of rows) {
-        list.push(`Autorius:${author.firstname} ${author.lastname}`);
+        list.push(`${++ind}. Author: ${author.firstname} ${author.lastname}`);
     }
     return list
 }
@@ -41,7 +42,7 @@ Author.findById = async (connection, authorId) => {
     if (rows.length === 0) {
         return 'ERROR: tokio ID nera'
     }
-    const byID = `Autorius, kurio ID = ${authorId} yra ${rows[0].firstname} ${rows[0].lastname}`;
+    const byID = `Author, whose ID = ${authorId} is ${rows[0].firstname} ${rows[0].lastname}`;
     return byID;
 }
 /**
@@ -53,7 +54,7 @@ Author.findById = async (connection, authorId) => {
 Author.findByFirstname = async (connection, authorFirstname) => {
     sql = 'SELECT * FROM `authors` WHERE `firstname` = "' + authorFirstname + '"';
     [rows] = await connection.execute(sql);
-    const byName = `Autoriaus duomenys, kurio vardas ${authorFirstname}: ID: ${rows[0].id} ${rows[0].firstname} ${rows[0].lastname}`;
+    const byName = `Authors data, whose name is ${authorFirstname}: ID = ${rows[0].id} ${rows[0].firstname} ${rows[0].lastname}`;
     return byName;
 }
 /**
@@ -65,7 +66,7 @@ Author.findByFirstname = async (connection, authorFirstname) => {
 Author.findByLastname = async (connection, authorLastname) => {
     sql = 'SELECT * FROM `authors` WHERE `lastname` = "' + authorLastname + '"';
     [rows] = await connection.execute(sql);
-    const byLastName = `Autoriaus duomenys, kurio pavarde ${authorLastname}: ID: ${rows[0].id} ${rows[0].firstname} ${rows[0].lastname}`;
+    const byLastName = `Authors data, whose last name is ${authorLastname}: ID = ${rows[0].id} ${rows[0].firstname} ${rows[0].lastname}`;
     return byLastName;
 }
 /**

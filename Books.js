@@ -47,32 +47,51 @@ Books.listAll = async (connection) => {
 Books.findByName = async (connection, bookName) => {
     sql = 'SELECT * FROM `books` WHERE `book_name` = "' + bookName + '"';
     [rows] = await connection.execute(sql);
-    const byBookName = `Book details by the name of "${bookName}": Author ID: ${rows[0].author_id} released in year ${rows[0].release_year}.`;
+    const byBookName = `Book details by the name of "${bookName}": Author ID = ${rows[0].author_id} released in year ${rows[0].release_year}.`;
     return byBookName;
 }
 
 Books.findByYear = async (connection, bookReleaseYear) => {
     sql = 'SELECT * FROM `books` WHERE `release_year` = "' + bookReleaseYear + '"';
     [rows] = await connection.execute(sql);
-    const byBookYear = `Book details by the year ${bookReleaseYear}: Author ID: ${rows[0].author_id}, book name "${rows[0].book_name}".`;
+    const byBookYear = `Book details by the year ${bookReleaseYear}: Author ID = ${rows[0].author_id}, book name "${rows[0].book_name}".`;
     return byBookYear;
 }
 
 
 Books.updateById = async (connection, bookId, propertyName, propertyValue) => {
-
+    sql = 'UPDATE books SET ' + propertyName + ' = "' + propertyValue + '" WHERE books.id =' + bookId;
+    [rows] = await connection.execute(sql);
+    const updatedBookByID = `Book whose ID = ${bookId} property ${propertyName} has been updated to "${propertyValue}"`
+    return updatedBookByID
 }
 
 Books.updateNameById = async (connection, bookId, bookName) => {
+    sql = 'UPDATE books SET book_name = "' + bookName + '" WHERE books.id =' + bookId;
+    [rows] = await connection.execute(sql);
+    const updatedBookNameByID = `Book, whose ID = ${bookId}, name has been updated to "${bookName}"`
+    return updatedBookNameByID
 }
 
 Books.updateYearById = async (connection, bookId, bookReleaseYear) => {
+    sql = 'UPDATE books SET release_year = "' + bookReleaseYear + '" WHERE books.id =' + bookId;
+    [rows] = await connection.execute(sql);
+    const updatedBookYearByID = `Book, whose ID = ${bookId}, release year has been updated to "${bookReleaseYear}"`
+    return updatedBookYearByID
 }
 
 Books.delete = async (connection, bookId) => {
+    sql = 'DELETE FROM books WHERE books.id =' + bookId;
+    [rows] = await connection.execute(sql);
+    const deletedBook = `Book whose ID = ${bookId} has been deleted from books list.`
+    return deletedBook
 }
 
 Books.deleteAllByAuthorId = async (connection, authorId) => {
+    sql = 'DELETE FROM books WHERE author_id =' + authorId;
+    [rows] = await connection.execute(sql);
+    const deletedBookByAuthor = `Book whose author ID = ${authorId} has been deleted from books list.`
+    return deletedBookByAuthor
 }
 
 module.exports = Books;
