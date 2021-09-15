@@ -50,7 +50,12 @@ Books.findByName = async (connection, bookName) => {
     const byBookName = `Book details by the name of "${bookName}": Author ID = ${rows[0].author_id} released in year ${rows[0].release_year}.`;
     return byBookName;
 }
-
+/**
+ * 
+ * @param {Object} connection Objektas, su kuriuo kvieciame duombazes mainpuliavimo metodus.
+ * @param {number} bookReleaseYear Knygos isleidimo metai.
+ * @returns {Promise<Object[]>} Tekstas, pateikiantis informacija apie knyga rasta pagal isleidimo metus. 
+ */
 Books.findByYear = async (connection, bookReleaseYear) => {
     sql = 'SELECT * FROM `books` WHERE `release_year` = "' + bookReleaseYear + '"';
     [rows] = await connection.execute(sql);
@@ -58,7 +63,14 @@ Books.findByYear = async (connection, bookReleaseYear) => {
     return byBookYear;
 }
 
-
+/**
+ * 
+ * @param {Object} connection Objektas, su kuriuo kvieciame duombazes mainpuliavimo metodus.
+ * @param {number} bookId Knygos ID.
+ * @param {string} propertyName Savybes pavadinimas.
+ * @param {string} propertyValue Savybes verte.
+ * @returns {Promise<Object[]>} Tekstas, pateikiantis atnaujinta informacija apie knyga rasta pagal knygos ID.
+ */
 Books.updateById = async (connection, bookId, propertyName, propertyValue) => {
     sql = 'UPDATE books SET ' + propertyName + ' = "' + propertyValue + '" WHERE books.id =' + bookId;
     [rows] = await connection.execute(sql);
@@ -66,6 +78,13 @@ Books.updateById = async (connection, bookId, propertyName, propertyValue) => {
     return updatedBookByID
 }
 
+/**
+ * 
+ * @param {Object} connection Objektas, su kuriuo kvieciame duombazes mainpuliavimo metodus.
+ * @param {number} bookId Knygos ID.
+ * @param {string} bookName Knygos pavadinimas.
+ * @returns {Promise<Object[]>} Tekstas, pateikiantis atnaujinta pavadinima knygos, kuri rasta pagal knygos ID.
+ */
 Books.updateNameById = async (connection, bookId, bookName) => {
     sql = 'UPDATE books SET book_name = "' + bookName + '" WHERE books.id =' + bookId;
     [rows] = await connection.execute(sql);
@@ -73,6 +92,13 @@ Books.updateNameById = async (connection, bookId, bookName) => {
     return updatedBookNameByID
 }
 
+/**
+ * 
+ * @param {Object} connection Objektas, su kuriuo kvieciame duombazes mainpuliavimo metodus.
+ * @param {number} bookId Knygos ID.
+ * @param {number} bookReleaseYear Knygos isleidimo metai.
+ * @returns {Promise<Object[]>} Tekstas, pateikiantis atnaujintus knygos isleidimo metus, kuri rasta pagal knygos ID.
+ */
 Books.updateYearById = async (connection, bookId, bookReleaseYear) => {
     sql = 'UPDATE books SET release_year = "' + bookReleaseYear + '" WHERE books.id =' + bookId;
     [rows] = await connection.execute(sql);
@@ -80,6 +106,12 @@ Books.updateYearById = async (connection, bookId, bookReleaseYear) => {
     return updatedBookYearByID
 }
 
+/**
+ * 
+ * @param {Object} connection Objektas, su kuriuo kvieciame duombazes mainpuliavimo metodus.
+ * @param {number} bookId Knygos ID.
+ * @returns {Promise<Object[]>} Tekstas pasakantis kuri knyga, pagal knygos ID, buvo istrinta.
+ */
 Books.delete = async (connection, bookId) => {
     sql = 'DELETE FROM books WHERE books.id =' + bookId;
     [rows] = await connection.execute(sql);
@@ -87,6 +119,12 @@ Books.delete = async (connection, bookId) => {
     return deletedBook
 }
 
+/**
+ * 
+ * @param {Object} connection Objektas, su kuriuo kvieciame duombazes mainpuliavimo metodus.
+ * @param {number} authorId Autoriaus ID.
+ * @returns {Promise<Object[]>} Tekstas pasakantis kuri knyga, pagal autoriaus ID, buvo istrinta.
+ */
 Books.deleteAllByAuthorId = async (connection, authorId) => {
     sql = 'DELETE FROM books WHERE author_id =' + authorId;
     [rows] = await connection.execute(sql);
