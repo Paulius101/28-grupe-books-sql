@@ -1,5 +1,5 @@
 const Author = {};
-
+const Validation = require('./Validation');
 
 /**
  * 
@@ -9,15 +9,22 @@ const Author = {};
  * @returns {Promise<string>} Tekstas, apibudinantis, koks autorius irasytas i duomenu baze.
  */
 Author.create = async (connection, authorFirstname, authorLastname) => {
-    if (!isValidName(authorFirstname && authorLastname)) {
-        return console.error('ERROR: invalid string entry')
+
+    if (!Validation.isValidName(authorFirstname)) {
+        return console.error('ERROR: invalid string entry.')
     }
-    else {
-        sql = 'INSERT INTO authors (id, firstname, lastname)\
-    VALUES (NULL, "'+ authorFirstname + '", "' + authorLastname + '")';
-        [rows] = await connection.execute(sql);
-        return responce = `${authorFirstname} ${authorLastname} buvo sekmingai irasytas`
+    if (!Validation.isValidName(authorLastname)) {
+        return console.error('ERROR: invalid string entry.')
     }
+
+    const sql = 'INSERT INTO authors (id, firstname, lastname)\
+            VALUES (NULL, "'+ authorFirstname + '", "' + authorLastname + '")';
+    const [rows] = await connection.execute(sql);
+    if (rows.affectedRows === 0) {
+        return 'ERROR:nepavyko iterpti autoriaus'
+    }
+    return `${authorFirstname} ${authorLastname} buvo sekmingai irasytas`
+
 
     // console.log(responce);
 }
@@ -27,9 +34,9 @@ Author.create = async (connection, authorFirstname, authorLastname) => {
  * @returns {Promise<string>} Tekstas, parodantis autoriu sarasa.
  */
 Author.listAll = async (connection) => {
-    sql = 'SELECT *\
+    const sql = 'SELECT *\
     FROM authors';
-    [rows] = await connection.execute(sql);
+    const [rows] = await connection.execute(sql);
     let list = []
     let ind = 0;
     for (const author of rows) {
@@ -44,12 +51,12 @@ Author.listAll = async (connection) => {
  * @returns {Promise<string>} Tekstas, parodantis autoriu pagal ID.
  */
 Author.findById = async (connection, authorId) => {
-    if (!isValidNumber(authorId)) {
-        return ('ERROR: not a valid entry')
+    if (!Validation.IDisValid(authorId)) {
+        return ('ERROR: not a valid entry.')
     }
     else {
-        sql = 'SELECT * FROM `authors` WHERE `id` = ' + authorId;
-        [rows] = await connection.execute(sql);
+        const sql = 'SELECT * FROM `authors` WHERE `id` = ' + authorId;
+        const [rows] = await connection.execute(sql);
         if (rows.length === 0) {
             return 'ERROR: tokio ID nera';
         }
@@ -63,13 +70,18 @@ Author.findById = async (connection, authorId) => {
  * @returns {Promise<string>} Tekstas, parodantis autoriaus info pagal varda.
  */
 Author.findByFirstname = async (connection, authorFirstname) => {
-    if (!isValidName(authorFirstname)) {
-        return console.error('ERROR: invalid string entry')
+    if (!Validation.isValidName(authorFirstname)) {
+        return console.error('ERROR: invalid string entry.')
     }
     else {
-        sql = 'SELECT * FROM `authors` WHERE `firstname` = "' + authorFirstname + '"';
-        [rows] = await connection.execute(sql);
-        return `Authors data, whose name is ${authorFirstname}: ID = ${rows[0].id} ${rows[0].firstname} ${rows[0].lastname}`;
+        const sql = 'SELECT * FROM `authors` WHERE `firstname` = "' + authorFirstname + '"';
+        const [rows] = await connection.execute(sql);
+        const findings = rows.map(obj => obj.firstname + ' ' + obj.lastname)
+        console.log(`Authors by the name of "${authorFirstname}":`)
+        for (const author of findings) {
+
+        }
+        // return `Authors data, whose name is ${ authorFirstname }: ID = ${ rows[0].id } ${ rows[0].firstname } ${ rows[0].lastname } `;
     }
 }
 /**
@@ -79,13 +91,13 @@ Author.findByFirstname = async (connection, authorFirstname) => {
  * @returns Tekstas, parodantis autoriaus info pagal pavarde.
  */
 Author.findByLastname = async (connection, authorLastname) => {
-    if (!isValidName(authorLastname)) {
-        return console.error('ERROR: invalid string entry')
+    if (!Validation.isValidName(authorLastname)) {
+        return console.error('ERROR: invalid string entry.')
     }
     else {
-        sql = 'SELECT * FROM `authors` WHERE `lastname` = "' + authorLastname + '"';
-        [rows] = await connection.execute(sql);
-        return `Authors data, whose last name is ${authorLastname}: ID = ${rows[0].id} ${rows[0].firstname} ${rows[0].lastname}`;
+        const sql = 'SELECT * FROM `authors` WHERE `lastname` = "' + authorLastname + '"';
+        const [rows] = await connection.execute(sql);
+        return `Authors data, whose last name is ${authorLastname}: ID = ${rows[0].id} ${rows[0].firstname} ${rows[0].lastname} `;
     }
 }
 /**
@@ -97,14 +109,29 @@ Author.findByLastname = async (connection, authorLastname) => {
  * @returns {Promise<string>} Tekstas, skelbiantis kokia savybe, pagal duota ID, buvo atnaujinta i kokia verte.
  */
 Author.updatePropertyById = async (connection, authorId, propertyName, propertyValue) => {
-    if (!isValidName(propertyName)) {
-        return console.error('ERROR: invalid string entry')
+    const columns = ['id', 'firstname', 'lastname'];
+    //Tikriname ar propertyName yra viena is lenteles reiksmiu.
+    if (!columns.includes(propertyName)) {
+        return "ERROR: such property name doesn't exist"
     }
-    else {
-        sql = 'UPDATE authors SET ' + propertyName + ' = "' + propertyValue + '" WHERE authors.id =' + authorId;
-        [rows] = await connection.execute(sql);
-        return `Author whose ID = ${authorId} property ${propertyName} has been updated to ${propertyValue}`
+    //Jeigu propertyName yra ID tai value yra skaicius.
+    if (propertyName === columns[0] && !Validation.IDisValid(propertyValue)) {
+        return console.error('ERROR: invalid ID entry')
     }
+
+    //Jeigu firsname/lastname, tai tekstas value.
+
+    if (propertyName === 'firstname' && !Validation.isText(propertyValue)) {
+        return console.error('ERROR: invalid firstname string entry.')
+    }
+    if (propertyName === 'lastname' && !Validation.isText(propertyValue)) {
+        return console.error('ERROR: invalid lastname string entry.')
+    }
+
+    const sql = 'UPDATE authors SET ' + propertyName + ' = "' + propertyValue + '" WHERE authors.id =' + authorId;
+    const [rows] = await connection.execute(sql);
+    return `Author whose ID = ${authorId} property ${propertyName} has been updated to ${propertyValue} `
+
 }
 /**
  * 
@@ -113,27 +140,16 @@ Author.updatePropertyById = async (connection, authorId, propertyName, propertyV
  * @returns {Promise<string>} Tekstas, parodantis pagal koki ID buvo istirntas autorius.
  */
 Author.delete = async (connection, authorId) => {
-    sql = 'DELETE FROM authors WHERE authors.id =' + authorId;
-    [rows] = await connection.execute(sql);
-
-    return `User whose ID = ${authorId} has been deleted from authors list.`
-
-}
-const isValidName = (name) => {
-    if (name === undefined ||
-        typeof name !== 'string' ||
-        name.length < 2 ||
-        name === '') {
-        return false;
+    if (!Validation.IDisValid(authorId)) {
+        return console.error('ERROR: invalid ID entry.')
     }
-    return true;
-}
+    else {
+        const sql = 'DELETE FROM authors WHERE authors.id =' + authorId;
+        const [rows] = await connection.execute(sql);
 
-const isValidNumber = (num) => {
-    if (typeof num !== 'number' || num % 1 !== 0 || !isFinite(num) || num < 1) {
-        return false
+        return `User whose ID = ${authorId} has been deleted from authors list.`
     }
-    return true
+
 }
 
 
