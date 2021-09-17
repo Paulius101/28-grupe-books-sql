@@ -26,6 +26,9 @@ app.init = async () => {
     const create4 = await Author.create(conn, 'Makaule', 'Tuscia');
     console.log(create4);
 
+    const create5 = await Author.create(conn, 'Tusciazodis', 'Tuscia');
+    console.log(create5);
+
     const list = await Author.listAll(conn);
     console.log(list);
 
@@ -33,15 +36,17 @@ app.init = async () => {
     console.log(byID);
 
     const byName = await Author.findByFirstname(conn, 'Tusciazodis')
+    console.log('Authors by the name of "Tusciazodis":')
     console.log(byName);
 
-    const byLastName = await Author.findByLastname(conn, 'Ramusis')
+    const byLastName = await Author.findByLastname(conn, 'Tuscia')
+    console.log('Authors by the last name of "Tuscia":')
     console.log(byLastName);
 
     const update = await Author.updatePropertyById(conn, 1, 'firstname', 'Pavardenis')
     console.log(update);
 
-    const deleted = await Author.delete(conn, 4);
+    const deleted = await Author.delete(conn, 5);
     console.log(deleted);
 
 
