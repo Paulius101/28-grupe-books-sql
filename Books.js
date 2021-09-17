@@ -21,13 +21,13 @@ Books.create = async (connection, authorId, bookName, bookReleaseYear) => {
     if (!Validation.IDisValid(authorId)) {
         return ('ERROR: not a valid entry.')
     }
-    else {
-        sql = 'INSERT INTO books (author_id,book_name, release_year)\
+
+    sql = 'INSERT INTO books (author_id,book_name, release_year)\
     VALUES ("'+ authorId + '", "' + bookName + '", "' + bookReleaseYear + '")';
-        [rows] = await connection.execute(sql);
-        const createBook = `"${bookName}" written by author whose ID =  ${authorId} in year ${bookReleaseYear} buvo sekmingai irasyta i knygu sarasa`
-        return createBook
-    }
+    [rows] = await connection.execute(sql);
+    const createBook = `"${bookName}" written by author whose ID =  ${authorId} in year ${bookReleaseYear} buvo sekmingai irasyta i knygu sarasa`
+    return createBook
+
 }
 
 /**
@@ -57,12 +57,12 @@ Books.findByName = async (connection, bookName) => {
     if (!Validation.isValidName(bookName)) {
         return console.error('ERROR: invalid string entry.')
     }
-    else {
-        sql = 'SELECT * FROM `books` WHERE `book_name` = "' + bookName + '"';
-        [rows] = await connection.execute(sql);
-        const byBookName = `Book details by the name of "${bookName}": Author ID = ${rows[0].author_id} released in year ${rows[0].release_year}.`;
-        return byBookName;
-    }
+
+    sql = 'SELECT * FROM `books` WHERE `book_name` = "' + bookName + '"';
+    [rows] = await connection.execute(sql);
+    const byBookName = `Book details by the name of "${bookName}": Author ID = ${rows[0].author_id} released in year ${rows[0].release_year}.`;
+    return byBookName;
+
 }
 /**
  * 
@@ -74,12 +74,12 @@ Books.findByYear = async (connection, bookReleaseYear) => {
     if (!Validation.IDisValid(bookReleaseYear)) {
         return ('ERROR: not a valid entry.')
     }
-    else {
-        sql = 'SELECT * FROM `books` WHERE `release_year` = "' + bookReleaseYear + '"';
-        [rows] = await connection.execute(sql);
-        const byBookYear = `Book details by the year ${bookReleaseYear}: Author ID = ${rows[0].author_id}, book name "${rows[0].book_name}".`;
-        return byBookYear;
-    }
+
+    sql = 'SELECT * FROM `books` WHERE `release_year` = "' + bookReleaseYear + '"';
+    [rows] = await connection.execute(sql);
+    const byBookYear = `Book details by the year ${bookReleaseYear}: Author ID = ${rows[0].author_id}, book name "${rows[0].book_name}".`;
+    return byBookYear;
+
 }
 
 /**
@@ -91,15 +91,31 @@ Books.findByYear = async (connection, bookReleaseYear) => {
  * @returns {Promise<string>} Tekstas, pateikiantis atnaujinta informacija apie knyga rasta pagal knygos ID.
  */
 Books.updateById = async (connection, bookId, propertyName, propertyValue) => {
-    if (!Validation.isText(propertyName)) {
-        return console.error('ERROR: invalid string entry.')
+
+    const columns = ['id', 'book_name', 'release_year'];
+    //Tikriname ar propertyName yra viena is lenteles reiksmiu.
+    if (!columns.includes(propertyName)) {
+        return "ERROR: such property name doesn't exist"
     }
-    else {
-        sql = 'UPDATE books SET ' + propertyName + ' = "' + propertyValue + '" WHERE books.id =' + bookId;
-        [rows] = await connection.execute(sql);
-        const updatedBookByID = `Book whose ID = ${bookId} property ${propertyName} has been updated to "${propertyValue}"`
-        return updatedBookByID
+    //Jeigu propertyName yra ID tai value yra skaicius.
+    if (propertyName === columns[0] && !Validation.IDisValid(propertyValue)) {
+        return console.error('ERROR: invalid ID entry')
     }
+    if (propertyName === columns[2] && !Validation.IDisValid(propertyValue)) {
+        return console.error('ERROR: invalid ID entry')
+    }
+
+    //Jeigu book name, tai tekstas value.
+
+    if (propertyName === 'book_name' && !Validation.isText(propertyValue)) {
+        return console.error('ERROR: invalid book name string entry.')
+    }
+
+    sql = 'UPDATE books SET ' + propertyName + ' = "' + propertyValue + '" WHERE books.id =' + bookId;
+    [rows] = await connection.execute(sql);
+    const updatedBookByID = `Book whose ID = ${bookId} property ${propertyName} has been updated to "${propertyValue}"`
+    return updatedBookByID
+
 }
 
 /**
@@ -116,12 +132,12 @@ Books.updateNameById = async (connection, bookId, bookName) => {
     if (!Validation.IDisValid(bookId)) {
         return ('ERROR: not a valid entry.')
     }
-    else {
-        sql = 'UPDATE books SET book_name = "' + bookName + '" WHERE books.id =' + bookId;
-        [rows] = await connection.execute(sql);
-        const updatedBookNameByID = `Book, whose ID = ${bookId}, name has been updated to "${bookName}"`
-        return updatedBookNameByID
-    }
+
+    sql = 'UPDATE books SET book_name = "' + bookName + '" WHERE books.id =' + bookId;
+    [rows] = await connection.execute(sql);
+    const updatedBookNameByID = `Book, whose ID = ${bookId}, name has been updated to "${bookName}"`
+    return updatedBookNameByID
+
 }
 
 /**
@@ -135,12 +151,12 @@ Books.updateYearById = async (connection, bookId, bookReleaseYear) => {
     if (!Validation.IDisValid(bookId || bookReleaseYear)) {
         return ('ERROR: not a valid entry.')
     }
-    else {
-        sql = 'UPDATE books SET release_year = "' + bookReleaseYear + '" WHERE books.id =' + bookId;
-        [rows] = await connection.execute(sql);
-        const updatedBookYearByID = `Book, whose ID = ${bookId}, release year has been updated to "${bookReleaseYear}"`
-        return updatedBookYearByID
-    }
+
+    sql = 'UPDATE books SET release_year = "' + bookReleaseYear + '" WHERE books.id =' + bookId;
+    [rows] = await connection.execute(sql);
+    const updatedBookYearByID = `Book, whose ID = ${bookId}, release year has been updated to "${bookReleaseYear}"`
+    return updatedBookYearByID
+
 }
 
 /**
@@ -153,12 +169,12 @@ Books.delete = async (connection, bookId) => {
     if (!Validation.IDisValid(bookId)) {
         return ('ERROR: not a valid entry.')
     }
-    else {
-        sql = 'DELETE FROM books WHERE books.id =' + bookId;
-        [rows] = await connection.execute(sql);
-        const deletedBook = `Book whose ID = ${bookId} has been deleted from books list.`
-        return deletedBook
-    }
+
+    sql = 'DELETE FROM books WHERE books.id =' + bookId;
+    [rows] = await connection.execute(sql);
+    const deletedBook = `Book whose ID = ${bookId} has been deleted from books list.`
+    return deletedBook
+
 }
 
 /**
@@ -171,12 +187,12 @@ Books.deleteAllByAuthorId = async (connection, authorId) => {
     if (!Validation.IDisValid(authorId)) {
         return ('ERROR: not a valid entry.')
     }
-    else {
-        sql = 'DELETE FROM books WHERE author_id =' + authorId;
-        [rows] = await connection.execute(sql);
-        const deletedBookByAuthor = `Book whose author ID = ${authorId} has been deleted from books list.`
-        return deletedBookByAuthor
-    }
+
+    sql = 'DELETE FROM books WHERE author_id =' + authorId;
+    [rows] = await connection.execute(sql);
+    const deletedBookByAuthor = `Book whose author ID = ${authorId} has been deleted from books list.`
+    return deletedBookByAuthor
+
 }
 
 module.exports = Books;
